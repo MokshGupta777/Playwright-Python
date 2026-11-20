@@ -1,4 +1,4 @@
-# 🍌 Project Banana — Playwright Python Test Automation
+Playwright Python Test Automation
 
 A professional-grade **end-to-end test automation framework** built with **Playwright (Sync API)** and **Python**, following the **Page Object Model (POM)** design pattern.
 
