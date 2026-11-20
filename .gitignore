@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Playwright
+test-results/
+playwright-report/
+screenshots/
+videos/
+traces/
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+report.html
+assets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.log
