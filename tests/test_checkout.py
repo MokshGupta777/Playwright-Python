@@ -1,37 +1,38 @@
-"""
-Test Suite — Checkout flow (2 test cases).
-"""
-
 import pytest
-
 from pages.checkout_page import CheckoutPage
 from data.test_data import ExpectedTexts, CheckoutInfo
-from utils.actions import add_items_and_go_to_cart, complete_checkout_flow
+from utils.actions import go_to_cart_with_items, do_full_checkout
 
 
 class TestCheckout:
-    """Checkout flow test cases."""
 
     @pytest.mark.smoke
-    @pytest.mark.checkout
     def test_complete_checkout(self, page):
-        """TC-11: Full checkout flow completes with a confirmation message."""
-        header = complete_checkout_flow(page)
-        assert header == ExpectedTexts.CHECKOUT_COMPLETE_HEADER
+        checkout = do_full_checkout(page)
+        assert checkout.get_complete_header() == ExpectedTexts.CHECKOUT_COMPLETE_HEADER
 
     @pytest.mark.regression
-    @pytest.mark.checkout
-    def test_checkout_empty_fields_shows_error(self, page):
-        """TC-12: Submitting checkout without info shows a validation error."""
-        cart = add_items_and_go_to_cart(page, count=1)
+    def test_empty_fields_error(self, page):
+        cart = go_to_cart_with_items(page, count=1)
         cart.proceed_to_checkout()
-
         checkout = CheckoutPage(page)
-        checkout.fill_checkout_info(
-            CheckoutInfo.EMPTY["first_name"],
-            CheckoutInfo.EMPTY["last_name"],
-            CheckoutInfo.EMPTY["postal_code"],
-        )
+        checkout.fill_info("", "", "")
         checkout.click_continue()
+        assert checkout.get_error() == ExpectedTexts.CHECKOUT_ERROR_FIRST_NAME
 
-        assert checkout.get_checkout_error() == ExpectedTexts.CHECKOUT_ERROR_FIRST_NAME
+    @pytest.mark.regression
+    def test_total_price_visible(self, page):
+        cart = go_to_cart_with_items(page, count=1)
+        cart.proceed_to_checkout()
+        checkout = CheckoutPage(page)
+        info = CheckoutInfo.VALID
+        checkout.fill_info(info["first_name"], info["last_name"], info["postal_code"])
+        checkout.click_continue()
+        total = checkout.get_total()
+        assert "Total:" in total
+
+    @pytest.mark.regression
+    def test_back_home_after_checkout(self, page):
+        checkout = do_full_checkout(page)
+        checkout.click_back_home()
+        assert "inventory" in page.url
